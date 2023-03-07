@@ -1,123 +1,13 @@
-//import assets 
-///import bot from './assets/bot.svg'; 
-///import user from './assets/user.svg'; 
-
-import bot from './assets/send.svg'; 
-import user from './assets/send.svg'; 
-
-//Since we're not using react, have to target our elements manually
-const form = document.querySelector('form'); 
-const chatContainer = document.querySelector('#chat_container'); 
-
-let loadInterval; 
-
-//create a function which has three dots when it is responding to us
-function loader(element){
-    element.textContent = '';
-
-    loadInterval = setInterval(() => {
-      element.textContent += '.'; 
-      
-      if (element.textContent === '....'){
-        element.textContent=''; 
-      }
-    }, 300) 
-}
-
-function typeText(element, text){
-  let index = 0; 
-
-  let interval = setInterval(() => {
-    if (index < text.length){
-      element.innerHTML += text.charAt(index); //get character under a specific index in the text that ai is going to return 
-      index++;
-    } else{
-      clearInterval(interval); 
-    }
-  }, 20)
-}
-
-//generate a unique id for each message to map over them 
-function generateUniqueId(){
-  const timestamp = Date.now(); 
-  const randomNumber = Math.random(); 
-  const hexadecimalString = randomNumber.toString(16); //16 characters 
-
-  return `id-${timestamp}-${hexadecimalString}`
-}
-
-//isAi speaking or us, value of the message, and our unique ID
-function chatStripe (isAi,value, uniqueId){ 
-    return (
-      `
-        <div class="wrapper ${isAi && 'ai'}">
+(function(){const r=document.createElement("link").relList;if(r&&r.supports&&r.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))s(e);new MutationObserver(e=>{for(const n of e)if(n.type==="childList")for(const i of n.addedNodes)i.tagName==="LINK"&&i.rel==="modulepreload"&&s(i)}).observe(document,{childList:!0,subtree:!0});function o(e){const n={};return e.integrity&&(n.integrity=e.integrity),e.referrerpolicy&&(n.referrerPolicy=e.referrerpolicy),e.crossorigin==="use-credentials"?n.credentials="include":e.crossorigin==="anonymous"?n.credentials="omit":n.credentials="same-origin",n}function s(e){if(e.ep)return;e.ep=!0;const n=o(e);fetch(e.href,n)}})();const f="/assets/bot-61bdb6bf.svg",m="/assets/user-bcdeb18e.svg",c=document.querySelector("form"),a=document.querySelector("#chat_container");let d;function p(t){t.textContent="",d=setInterval(()=>{t.textContent+=".",t.textContent==="...."&&(t.textContent="")},300)}function g(t,r){let o=0,s=setInterval(()=>{o<r.length?(t.innerHTML+=r.charAt(o),o++):clearInterval(s)},20)}function h(){const t=Date.now(),o=Math.random().toString(16);return`id-${t}-${o}`}function l(t,r,o){return`
+        <div class="wrapper ${t&&"ai"}">
           <div class="chat">
             <div class="profile"> 
               <img 
-                src="./assets/send.svg" 
-                alt="${isAi ? 'bot' : 'user'}" 
+                src="${t?f:m}" 
+                alt="${t?"bot":"user"}" 
               />
             </div>
-            <div class="message" id=${uniqueId}>${value}</div>
+            <div class="message" id=${o}>${r}</div>
           </div>
         </div>
-      `
-    ) //src if isAI true, then bot, otherwise user. For alt if isAI true, print bot, otherwise print user 
-}
-
-const handleSubmit = async (e) =>{
-  e.preventDefault(); 
-
-  const data = new FormData(form); 
-
-  //user's chatstripe
-  chatContainer.innerHTML += chatStripe(false, data.get('prompt')); 
-
-  form.reset(); 
-
-  //bot's chatstripe
-  const uniqueId = generateUniqueId(); 
-  chatContainer.innerHTML += chatStripe(true, " ", uniqueId); 
-
-  chatContainer.scrollTop = chatContainer.scrollHeight; 
-
-  const messageDiv = document.getElementById(uniqueId); 
-
-  loader(messageDiv); 
-
-  // fetch data from server to get response from bot 
-  // A Promise is an object which represents the completion or failure of asychronous operation 
-  // We can use await keyword inside the async to wait for the promise  
-  const response = await fetch('https://robs-codex.onrender.com', {
-    method: 'POST', 
-    headers: {
-      'Content-Type':'application/json'
-    }, 
-    body: JSON.stringify({
-      prompt: data.get('prompt') //data coming from our text area element on screen
-    })
-  })
-  //after we get repsponse want to clear interval 
-  clearInterval(loadInterval); 
-  messageDiv.innerHTML=''; //clear the dots so we can add our message 
-
-  if(response.ok){
-    const data = await response.json(); //giving us the response from the backend 
-    const parsedData = data.bot.trim(); //parse data 
-
-    typeText(messageDiv, parsedData); //take parseData into typeText function from earlier 
-  } else { //if we have an error 
-    const err = await response.text(); 
-
-    messageDiv.innerHTML = "Something went wrong";
-
-    alert(err);
-  }
-}
-
-form.addEventListener('submit',handleSubmit); 
-form.addEventListener('keyup', (e) => {
-  if (e.keyCode === 13){
-    handleSubmit(e); 
-  }
-})
+      `}const u=async t=>{t.preventDefault();const r=new FormData(c);a.innerHTML+=l(!1,r.get("prompt")),c.reset();const o=h();a.innerHTML+=l(!0," ",o),a.scrollTop=a.scrollHeight;const s=document.getElementById(o);p(s);const e=await fetch("https://robs-codex.onrender.com",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:r.get("prompt")})});if(clearInterval(d),s.innerHTML="",e.ok){const i=(await e.json()).bot.trim();g(s,i)}else{const n=await e.text();s.innerHTML="Something went wrong",alert(n)}};c.addEventListener("submit",u);c.addEventListener("keyup",t=>{t.keyCode===13&&u(t)});
