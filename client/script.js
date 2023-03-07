@@ -1,6 +1,9 @@
 //import assets 
-import bot from './assets/bot.svg'; 
-import user from './assets/user.svg'; 
+///import bot from './assets/bot.svg'; 
+///import user from './assets/user.svg'; 
+
+import bot from './assets/send.svg'; 
+import user from './assets/send.svg'; 
 
 //Since we're not using react, have to target our elements manually
 const form = document.querySelector('form'); 
